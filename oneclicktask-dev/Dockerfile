@@ -24,7 +24,7 @@ RUN set -eux; \
     --no-progress \
     --optimize-autoloader \
     --no-scripts; \
-    composer dump-autoload --optimize --no-dev --classmap-authoritative
+    composer dump-autoload --optimize --no-dev --classmap-authoritative --no-scripts
 
 FROM node:22-alpine AS assets
 WORKDIR /app
