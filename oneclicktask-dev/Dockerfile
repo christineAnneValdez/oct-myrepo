@@ -36,7 +36,8 @@ RUN set -eux; \
     else echo "package.json not found in build context"; exit 1; fi; \
     cp -a "$APP_DIR"/. /app; \
     corepack enable; \
-    pnpm install --frozen-lockfile; \
+    export CI=true HUSKY=0; \
+    pnpm install --frozen-lockfile --ignore-scripts; \
     pnpm build
 
 FROM php:8.3-apache AS app
