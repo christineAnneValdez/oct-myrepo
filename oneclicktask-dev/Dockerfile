@@ -18,7 +18,7 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
 FROM node:22-alpine AS assets
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN corepack enable && pnpm install --frozen-lockfile
 
 COPY . .
