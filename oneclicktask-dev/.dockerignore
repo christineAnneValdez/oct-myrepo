@@ -12,6 +12,5 @@ storage/framework/views/*
 .env
 .env.*
 !.env.example
-Dockerfile*
 README.md
 CLAUDE.md

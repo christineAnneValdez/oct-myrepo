@@ -21,9 +21,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack enable && pnpm install --frozen-lockfile
 
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.ts tsconfig.json components.json ./
+COPY . .
 RUN pnpm build
 
 FROM php:8.3-apache AS app
