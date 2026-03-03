@@ -3,26 +3,33 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 
-COPY composer.json composer.lock ./
-RUN composer install \
+COPY . /src
+RUN set -eux; \
+    if [ -f /src/composer.json ]; then APP_DIR=/src; \
+    elif [ -f /src/oneclicktask-dev/composer.json ]; then APP_DIR=/src/oneclicktask-dev; \
+    else echo "composer.json not found in build context"; exit 1; fi; \
+    cp -a "$APP_DIR"/. /app; \
+    composer install \
     --no-dev \
     --prefer-dist \
     --no-interaction \
     --no-progress \
     --optimize-autoloader \
-    --no-scripts
-
-COPY . .
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+    --no-scripts; \
+    composer dump-autoload --optimize --no-dev --classmap-authoritative
 
 FROM node:22-alpine AS assets
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && pnpm install --frozen-lockfile
-
-COPY . .
-RUN pnpm build
+COPY . /src
+RUN set -eux; \
+    if [ -f /src/package.json ]; then APP_DIR=/src; \
+    elif [ -f /src/oneclicktask-dev/package.json ]; then APP_DIR=/src/oneclicktask-dev; \
+    else echo "package.json not found in build context"; exit 1; fi; \
+    cp -a "$APP_DIR"/. /app; \
+    corepack enable; \
+    pnpm install --frozen-lockfile; \
+    pnpm build
 
 FROM php:8.3-apache AS app
 WORKDIR /var/www/html
