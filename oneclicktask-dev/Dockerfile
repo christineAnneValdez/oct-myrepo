@@ -1,7 +1,15 @@
 # syntax=docker/dockerfile:1.7
 
-FROM composer:2 AS vendor
+FROM composer:2 AS composer_bin
+
+FROM php:8.3-cli AS vendor
 WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer_bin /usr/bin/composer /usr/bin/composer
 
 COPY . /src
 RUN set -eux; \
