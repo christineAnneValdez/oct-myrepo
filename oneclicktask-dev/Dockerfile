@@ -26,15 +26,20 @@ RUN set -eux; \
     --no-scripts; \
     composer dump-autoload --optimize --no-dev --classmap-authoritative --no-scripts
 
-FROM node:22-alpine AS assets
+FROM php:8.3-cli-alpine AS assets
 WORKDIR /app
 
+RUN apk add --no-cache nodejs npm
+
+COPY --from=vendor /app/vendor /opt/vendor
 COPY . /src
 RUN set -eux; \
     if [ -f /src/package.json ]; then APP_DIR=/src; \
     elif [ -f /src/oneclicktask-dev/package.json ]; then APP_DIR=/src/oneclicktask-dev; \
     else echo "package.json not found in build context"; exit 1; fi; \
     cp -a "$APP_DIR"/. /app; \
+    cp -a /opt/vendor /app/vendor; \
+    if [ -f /app/.env.example ]; then cp /app/.env.example /app/.env; fi; \
     corepack enable; \
     export CI=true HUSKY=0; \
     pnpm install --frozen-lockfile --ignore-scripts; \
