@@ -74,7 +74,7 @@ watch(
     <div class="flex items-center gap-x-1">
         <BaseInput
             v-model="search"
-            placeholder="Find or create..."
+            placeholder="Find ..."
             @enter="onEnter"
             v-slot="{ inputRef }"
         >
